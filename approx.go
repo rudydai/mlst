@@ -1,4 +1,4 @@
-package mlst
+package main
 
 import (
     "os"
