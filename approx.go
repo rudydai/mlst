@@ -103,7 +103,7 @@ func (e Edge) PrintForm() (s string) {
     return fmt.Sprintf("%d %d\n", e.Ends[0], e.Ends[1])
 }
 
-func main() {
+func start() {
     edgesets := GetEdgeSets()
     if edgesets != nil {
         outsets := make([]EdgeSet, len(edgesets))
