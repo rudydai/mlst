@@ -123,11 +123,11 @@ func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
         return ret
     }
     for node, origneighbors := range(g.Neighbors) {
-        if degree[node] > 0 {
+        if len(origneighbors) > 0 {
             for _, adj := range(origneighbors) {
                 neighborset := Find(disjoint[adj])
                 thisset := Find(disjoint[node])
-                if thisset != neighborset && degree[adj] > 0 {
+                if thisset != neighborset {
                     newedge := Edge { [2]int{node, adj} }
                     newedge.Normalize()
                     ret[newedge] = true
