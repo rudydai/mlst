@@ -35,6 +35,7 @@ func CheckInput() []EdgeSet {
 		printError(fmt.Sprintf("Cannot open '%s' (%s).\n", infile, err.Error()))
 		return nil
 	}
+	defer file.Close()
 
 	inReader := NewInFileReader(file)
 	if edgeSets, err := inReader.ReadInputFile(); err != nil {
@@ -73,6 +74,7 @@ func CheckOutput(checkOutputProgramName string) {
 		printError(fmt.Sprintf("Cannot open '%s' (%s).\n", outfile, err.Error()))
 		return
 	}
+	defer file.Close()
 
 	outReader := NewOutFileReader(file)
 	if NumLeaves, err := outReader.ReadOutputFile(edgeSets); err != nil {

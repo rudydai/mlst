@@ -6,6 +6,7 @@ import (
 	"io"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 // extend the bufio.Reader, and keep track of the line number
@@ -28,6 +29,9 @@ type InFileReader struct {
 type OutFileReader struct {
 	Reader
 }
+type TeamInfoReader struct {
+	Reader
+}
 
 /*** Constants and Initializations ***/
 
@@ -38,6 +42,8 @@ const (
 var (
 	NumberFormatRegexp [3]*regexp.Regexp
 	NumberExpectedMsg  [3]string
+	LoginFormatRegexp  *regexp.Regexp
+	LoginExpectedMsg   string
 )
 
 func init() {
@@ -45,8 +51,11 @@ func init() {
 	NumberFormatRegexp[2] = regexp.MustCompile("^(\\d+) (\\d+)\\n?$")
 	NumberExpectedMsg[1] = "Expecting one natural number on a line with " +
 		"no leading or trailing spaces."
-	NumberExpectedMsg[2] = "Expecting two natural numbers separated by a single " +
-		"space on a line with no leading or trailing spaces."
+	NumberExpectedMsg[2] = "Expecting two natural numbers separated by a " +
+		"single space on a line with no leading or trailing spaces."
+
+	LoginFormatRegexp = regexp.MustCompile("^[[:alpha:]]{2}$")
+	LoginExpectedMsg = "Expecting two letters for login."
 }
 
 /*** Error ***/
@@ -59,8 +68,8 @@ func (e *Error) caseInfo() string {
 }
 
 func (e *Error) Error() string {
-	return fmt.Sprintf("Error on line %d%s: Got '%s'. %s", e.lineNum, e.caseInfo(), e.line,
-		e.message)
+	return fmt.Sprintf("Error on line %d%s: Got '%s'. %s", e.lineNum,
+		e.caseInfo(), e.line, e.message)
 }
 
 /*** Reader ***/
@@ -68,6 +77,9 @@ func (e *Error) Error() string {
 func (r *Reader) readLine() (err error) {
 	r.lineNum++
 	r.line, err = r.reader.ReadString('\n')
+	if len(r.line) > 0 {
+		err = nil
+	}
 	return
 }
 
@@ -280,4 +292,71 @@ func (r *OutFileReader) ReadOutputGraph(inEdgeSet EdgeSet) (int, *Error) {
 	}
 
 	return Gout.NumLeaves, nil
+}
+
+/*** TeamInfoReader ***/
+
+type Student struct {
+	Login, Name string
+}
+
+type TeamInfo struct {
+	Name    string
+	Members []Student
+}
+
+func NewTeamInfoReader(rd io.Reader) *TeamInfoReader {
+	var teamReader TeamInfoReader
+	teamReader.reader = bufio.NewReader(rd)
+	return &teamReader
+}
+
+func (r *TeamInfoReader) ReadTeamFile() (*TeamInfo, *Error) {
+	var team TeamInfo
+	if err := r.readLine(); err != nil {
+		return nil, r.ErrorWithExpected(fmt.Sprintf("Cannot parse team name (%s).",
+			err.Error()), "Expecting the team name on the first line.")
+	}
+
+	team.Name = strings.TrimSpace(r.line)
+	if len(team.Name) == 0 {
+		return nil, r.ErrorWithExpected("Team name cannot be blank.",
+			"Expecting a non-blank team name on the first line.")
+	}
+
+	team.Members = make([]Student, 0)
+	for err := r.readLine(); err != io.EOF; err = r.readLine() {
+		if err != nil {
+			return nil, r.Error(fmt.Sprintf("Cannot parse the next student (%s).",
+				err.Error()))
+		}
+
+		split := strings.SplitN(r.line, " ", 2)
+		login := strings.TrimSpace(split[0])
+
+		if !LoginFormatRegexp.MatchString(login) {
+			return nil, r.ErrorWithExpected(fmt.Sprintf("Student login (%s) is not valid.",
+				login), LoginExpectedMsg)
+		}
+
+		if len(split) == 1 {
+			return nil, r.ErrorWithExpected("Cannot parse student name.",
+				"Student login and student name separated by a single space on a line.")
+		}
+
+		name := strings.TrimSpace(split[1])
+		if len(name) == 0 {
+			return nil, r.Error(fmt.Sprintf(
+				"Student name should not be blank. Got (%s).", name))
+		}
+
+		student := Student{Login: login, Name: name}
+		team.Members = append(team.Members, student)
+	}
+
+	if len(team.Members) == 0 {
+		return &team, r.Error("There should be at least one student. Got none.")
+	}
+
+	return &team, nil
 }

@@ -1,4 +1,4 @@
-version: 1
+version: 2
 
 This directory contains details about the project for Maximum Leaf Spanning
 Tree.
@@ -14,4 +14,5 @@ INSTALL     - contains instructions for installing the checker programs for
 python      - contains Python implementations of checker programs (optional).
 
 == CHANGE_LOG ==
+version 2: Updated the Go program to handle files without CRLF on the last line.
 version 1: Added Python implementations.
