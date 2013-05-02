@@ -20,10 +20,16 @@ while len(s1) <100:
 	temp = None
 	
 	
-	for x in d:
-		if len(d[x]) > max:
-			max = len(d[x])
-			temp = x
+	if len(s1) == 0:
+		for x in d:
+			if len(d[x]) > max:
+				max = len(d[x])
+				temp = x
+	else:
+		for x in s1:
+			if len(d[x]) > max:
+				max = len(d[x])
+				temp = x
 
 	s1.add(temp)
 	for y in d[temp]:
@@ -41,10 +47,10 @@ while len(s1) <100:
 	
 g  = open('hard2.out' , 'w')
 g.write('1\n')
+
+g.write(str(len(edges)) + "\n")
 for e in edges:
-	g.write(str(len(edges)) + "\n")
-	for e in edges:
-		g.write(str(e) + '\n')
+	g.write(str(e) + '\n')
 g.close()
 
 
