@@ -1,7 +1,6 @@
 Team Rocket
-
-Rudy Dai (hm)
-Tony Wu (ft)
-Peter Gao (nx)
-Kevin Tee (fu)
-Logan Short (at)
+hm Rudy Dai
+ft Tony Wu
+nx Peter Gao
+fu Kevin Tee
+at Logan Short
