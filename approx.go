@@ -1,4 +1,4 @@
-package mlst
+package main
 
 import (
     "os"
@@ -31,7 +31,7 @@ func GetEdgeSets() (e []EdgeSet) {
     return nil
 }
 
-func PrintSets(e []EdgeSet) (err Error){
+func PrintSets(e []EdgeSet) (err error){
     var outfile string
     if len(args) < 2 {
         outfile = DefaultOutputFile
@@ -66,13 +66,13 @@ func PrintSets(e []EdgeSet) (err Error){
 }
 
 
-func ApproxSoln(e EdgeSet) (ret EdgeSet) {
+func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
     var ret EdgeSet
     g := e.Graph()
-    disjoint := make([]Element, g.NumNodes)
+    disjoint := make([]*Element, g.NumNodes)
     degree := make([]int, g.NumNodes)
     for i := 0; i < g.NumNodes; i++ {
-        disjoint[i] = MakeSet()
+        disjoint[i] = Makeset(i)
         degree[i] = 0
     }
     for node, adj := range(g.Neighbors) {
@@ -80,14 +80,14 @@ func ApproxSoln(e EdgeSet) (ret EdgeSet) {
         newedges := 0
         for _, neighbor := range(adj) {
             neighborSet := Find(disjoint[neighbor])
-            if neighborSet != Find(disjoint[node]) && !connected[neighborSet] {
+            if neighborSet != Find(disjoint[node]) && !connected[neighborSet.value] {
                 newedges += 1
-                connected[neighborSet] = true
+                connected[neighborSet.value] = true
             }
         }
         if degree[node] + newedges >= 3 {
             for otherset := range(connected) {
-                newEdge := Edge { [node, otherset] }
+                newEdge := Edge { [2]int{node, otherset} }
                 newEdge.Normalize()
                 ret[newEdge] = true
                 Union(disjoint[node], disjoint[otherset])
@@ -103,7 +103,7 @@ func (e Edge) PrintForm() (s string) {
     return fmt.Sprintf("%d %d\n", e.Ends[0], e.Ends[1])
 }
 
-func main() {
+func start() {
     edgesets := GetEdgeSets()
     if edgesets != nil {
         outsets := make([]EdgeSet, len(edgesets))
@@ -118,27 +118,29 @@ func main() {
 }
 
 type Element struct {
-    Parent *Element;
+    Parent *Element
+    value int
 }
 
-func Makeset() (*Element) {
-    e := new(Element);
-    e.Parent = e;
-    return e;
+func Makeset(val int) (*Element) {
+    e := new(Element)
+    e.Parent = e
+    e.value = val
+    return e
 }
 
 func Find(e *Element) (*Element) {
     if e.Parent == e {
-        return e;
+        return e
     }
     e.Parent = Find(e.Parent);
-    return e.Parent;
+    return e.Parent
 }
 
 func Union(e1,e2 *Element) () {
-    root1 := Find(e1);
-    root2 := Find(e2);
-    root1.Parent = root2;
+    root1 := Find(e1)
+    root2 := Find(e2)
+    root1.Parent = root2
 }
 
 
