@@ -76,31 +76,71 @@ func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
         degree[i] = 0
     }
     for node, adj := range(g.Neighbors) {
-        connected := make(map[int]bool)
+        ownSet := Find(disjoint[node]).value
+        connected := make(map[int]int)
         newedges := 0
         for _, neighbor := range(adj) {
             neighborSet := Find(disjoint[neighbor]).value
-            if neighborSet != Find(disjoint[node]).value && !connected[neighborSet] {
+            if _, ok := connected[neighborSet]; !ok && neighborSet != ownSet {
                 newedges += 1
-                connected[neighborSet] = true
-                newEdge := Edge { [2]int{node, neighborSet} }
-                newEdge.Normalize()
-                ret[newEdge] = true
+                connected[neighborSet] = neighbor 
             }
         }
         if degree[node] + newedges >= 3 {
-            for otherset := range(connected) {
-                newEdge := Edge { [2]int{node, otherset} }
+            for otherset, neighbor := range(connected) {
+                newEdge := Edge { [2]int{node, neighbor} }
                 newEdge.Normalize()
                 ret[newEdge] = true
                 Union(disjoint[node], disjoint[otherset])
                 degree[node] += 1
-                degree[otherset] += 1
+                degree[neighbor] += 1
+            }
+        }
+    }
+    gout := ret.Graph()
+    gout.Search()
+    if gout.NumOfComponents == 1 {
+        return ret
+    }
+    for node, origneighbors := range(g.Neighbors) {
+        if degree[node] > 1 {
+            for _, adj := range(origneighbors) {
+                neighborset := Find(disjoint[adj])
+                thisset := Find(disjoint[node])
+                if thisset != neighborset && degree[adj] > 1 {
+                    newedge := Edge { [2]int{node, adj} }
+                    newedge.Normalize()
+                    ret[newedge] = true
+                    Union(thisset, neighborset)
+                    degree[node] += 1
+                    degree[adj] += 1
+                }
+            }
+        }
+    }
+    gout.Search()
+    if gout.NumOfComponents == 1 {
+        return ret
+    }
+    for node, origneighbors := range(g.Neighbors) {
+        if degree[node] > 0 {
+            for _, adj := range(origneighbors) {
+                neighborset := Find(disjoint[adj])
+                thisset := Find(disjoint[node])
+                if thisset != neighborset && degree[adj] > 0 {
+                    newedge := Edge { [2]int{node, adj} }
+                    newedge.Normalize()
+                    ret[newedge] = true
+                    Union(thisset, neighborset)
+                    degree[node] += 1
+                    degree[adj] += 1
+                }
             }
         }
     }
     return ret
 }
+
 
 func (e Edge) PrintForm() (s string) {
     return fmt.Sprintf("%d %d\n", e.Ends[0], e.Ends[1])
