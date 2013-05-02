@@ -1,4 +1,4 @@
-package main
+package mlst
 
 import (
     "os"
@@ -12,7 +12,7 @@ func GetEdgeSets() (e []EdgeSet) {
     } else {
         infile = args[0]
     }
-
+    fmt.Print(infile)
     file, err := os.Open(infile)
     if err != nil {
         printError(fmt.Sprintf("Cannot open file"))
@@ -44,12 +44,12 @@ func PrintSets(e []EdgeSet) (err error){
         file.Close()
         return err
     }
-    if _, err := file.WriteString(string(len(e))+"\n"); err != nil {
+    if _, err := file.WriteString(fmt.Sprintf("%d\n", len(e))); err != nil {
         file.Close()
         return err
     }
-    for num, edges := range(e) {
-        _, err = file.WriteString(string(num)+"\n")
+    for _, edges := range(e) {
+        _, err = file.WriteString(fmt.Sprintf("%d\n", len(edges)))
         if err != nil {
             file.Close()
             return err
@@ -67,11 +67,11 @@ func PrintSets(e []EdgeSet) (err error){
 
 
 func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
-    var ret EdgeSet
+    var ret EdgeSet = make(map[Edge]bool)
     g := e.Graph()
-    disjoint := make([]*Element, g.NumNodes)
-    degree := make([]int, g.NumNodes)
-    for i := 0; i < g.NumNodes; i++ {
+    disjoint := make([]*Element, MaxNumNodes)
+    degree := make([]int, MaxNumNodes)
+    for i := 0; i < MaxNumNodes; i++ {
         disjoint[i] = Makeset(i)
         degree[i] = 0
     }
@@ -79,10 +79,13 @@ func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
         connected := make(map[int]bool)
         newedges := 0
         for _, neighbor := range(adj) {
-            neighborSet := Find(disjoint[neighbor])
-            if neighborSet != Find(disjoint[node]) && !connected[neighborSet.value] {
+            neighborSet := Find(disjoint[neighbor]).value
+            if neighborSet != Find(disjoint[node]).value && !connected[neighborSet] {
                 newedges += 1
-                connected[neighborSet.value] = true
+                connected[neighborSet] = true
+                newEdge := Edge { [2]int{node, neighborSet} }
+                newEdge.Normalize()
+                ret[newEdge] = true
             }
         }
         if degree[node] + newedges >= 3 {
@@ -103,7 +106,7 @@ func (e Edge) PrintForm() (s string) {
     return fmt.Sprintf("%d %d\n", e.Ends[0], e.Ends[1])
 }
 
-func start() {
+func Start() {
     edgesets := GetEdgeSets()
     if edgesets != nil {
         outsets := make([]EdgeSet, len(edgesets))
