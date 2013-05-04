@@ -91,6 +91,7 @@ func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
                 newEdge := Edge { [2]int{node, neighbor} }
                 newEdge.Normalize()
                 ret[newEdge] = true
+                //fmt.Printf("joining %d and %d\n", node, neighbor)
                 Union(disjoint[node], disjoint[otherset])
                 degree[node] += 1
                 degree[neighbor] += 1
@@ -99,18 +100,21 @@ func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
     }
     gout := ret.Graph()
     gout.Search()
-    if gout.NumOfComponents == 1 {
+    if gout.NumOfComponents == 1 && gout.NumNodes == g.NumNodes {
         return ret
     }
+    //fmt.Print("now beginning connecting of leafy forest\n")
     for node, origneighbors := range(g.Neighbors) {
         if degree[node] > 1 {
             for _, adj := range(origneighbors) {
-                neighborset := Find(disjoint[adj])
                 thisset := Find(disjoint[node])
+                neighborset := Find(disjoint[adj])
                 if thisset != neighborset && degree[adj] > 1 {
                     newedge := Edge { [2]int{node, adj} }
                     newedge.Normalize()
                     ret[newedge] = true
+                    //fmt.Printf("joining %d and %d\n", node, adj)
+                    gout.AddEdge(newedge)
                     Union(thisset, neighborset)
                     degree[node] += 1
                     degree[adj] += 1
@@ -119,25 +123,30 @@ func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
         }
     }
     gout.Search()
-    if gout.NumOfComponents == 1 {
+    if gout.NumOfComponents == 1 && gout.NumNodes == g.NumNodes {
         return ret
     }
+    //fmt.Print("joining leaves as necessary\n")
     for node, origneighbors := range(g.Neighbors) {
-        if len(origneighbors) > 0 {
-            for _, adj := range(origneighbors) {
-                neighborset := Find(disjoint[adj])
-                thisset := Find(disjoint[node])
-                if thisset != neighborset {
-                    newedge := Edge { [2]int{node, adj} }
-                    newedge.Normalize()
-                    ret[newedge] = true
-                    Union(thisset, neighborset)
-                    degree[node] += 1
-                    degree[adj] += 1
-                }
+        for _, adj := range(origneighbors) {
+            neighborset := Find(disjoint[adj])
+            thisset := Find(disjoint[node])
+            if thisset != neighborset {
+                newedge := Edge { [2]int{node, adj} }
+                newedge.Normalize()
+                ret[newedge] = true
+                //fmt.Printf("joining %d and %d\n", node, adj)
+                gout.AddEdge(newedge)
+                Union(thisset, neighborset)
+                degree[node] += 1
+                degree[adj] += 1
             }
         }
     }
+    /*gout.Search()
+    if gout.NumOfComponents != 1 {
+        fmt.Print("could not make a spanning tree\n")
+    }*/
     return ret
 }
 
