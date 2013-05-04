@@ -19,7 +19,6 @@ func GetEdgeSets() (e []EdgeSet) {
         file.Close()
         return nil
     }
-    
     inReader := NewInFileReader(file)
     if edgeSets, err := inReader.ReadInputFile(); err != nil {
         fmt.Print("Invalid format of infile")
@@ -83,7 +82,7 @@ func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
             neighborSet := Find(disjoint[neighbor]).value
             if _, ok := connected[neighborSet]; !ok && neighborSet != ownSet {
                 newedges += 1
-                connected[neighborSet] = neighbor 
+                connected[neighborSet] = neighbor
             }
         }
         if degree[node] + newedges >= 3 {
