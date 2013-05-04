@@ -3,6 +3,7 @@ package mlst
 import (
     "os"
     "fmt"
+    "math/rand"
 )
 
 func GetEdgeSets() (e []EdgeSet) {
@@ -30,7 +31,7 @@ func GetEdgeSets() (e []EdgeSet) {
     return nil
 }
 
-func PrintSets(e []EdgeSet) (err error){
+func PrintSets(e []EdgeSet) (err error) {
     var outfile string
     if len(args) < 2 {
         outfile = DefaultOutputFile
@@ -64,8 +65,27 @@ func PrintSets(e []EdgeSet) (err error){
     return nil
 }
 
+func ManyIters(e EdgeSet) (to_ret EdgeSet) {
+    var BRUTE_ITERS int = 1000
+    var best EdgeSet = nil
+    var curr EdgeSet
+    var numLeaves
+    var mostLeaves int = 0
+    for i := 0; i < BRUTE_ITERS; i++ {
+        ordering := rand.Perm(MaxNumNodes)
+        curr = ApproxSoln(e, ordering)
+        currg = curr.Graph()
+        currg.Search()
+        numLeaves = currg.NumLeaves
+        if numLeaves > mostLeaves {
+            mostLeaves = numLeaves
+            best = curr
+        }
+    }
+    return best
+}
 
-func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
+func ApproxSoln(e EdgeSet, order []int ) (to_ret EdgeSet) {
     var ret EdgeSet = make(map[Edge]bool)
     g := e.Graph()
     disjoint := make([]*Element, MaxNumNodes)
@@ -74,7 +94,8 @@ func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
         disjoint[i] = Makeset(i)
         degree[i] = 0
     }
-    for node, adj := range(g.Neighbors) {
+    for _, node := range(order) {
+        adj := g.Neighbors[node]
         ownSet := Find(disjoint[node]).value
         connected := make(map[int]int)
         newedges := 0
@@ -159,7 +180,7 @@ func Start() {
     if edgesets != nil {
         outsets := make([]EdgeSet, len(edgesets))
         for i, edgeset := range(edgesets) {
-            outsets[i] = ApproxSoln(edgeset)
+            outsets[i] = ManyIters(edgeset)
         }
         err := PrintSets(outsets)
         if err != nil {
