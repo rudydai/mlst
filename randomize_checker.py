@@ -47,28 +47,81 @@ while True:
             i += 1
     check_if_mlst()
 
-    # Method 3: Generate a LST, greater amortized time
-    i = 0
+    def dfs(node, mlst, visited):
+        if node in visited:
+            return
+
+        visited.add(node)
+
+        import random
+        random.shuffle(d[node])
+        connecting_nodes = d[node]
+
+        for n in connecting_nodes:
+            if n not in visited:
+                mlst.append((node, n))
+                dfs(n, mlst, visited)
+
+
+    visited = set([])
     mlst = []
-    nodes = set(d.keys())
-    visited_nodes = set([])
-    visited_connected_nodes = set([])
+    import random as rand
+    dfs(rand.sample(set(d.keys()), 1)[0], mlst, visited)
+    print mlst
 
-    while i < len(d.keys()) - 1:
-        import random as rand
-        random_node = rand.sample(nodes, 1)[0]
+    def num_leaves(mlst):
+        num_leaves = {}
+        for edge in mlst:
+            if edge[0] in num_leaves.keys():
+                num_leaves[edge[0]] += 1
+            else:
+                num_leaves[edge[0]] = 1
+            if edge[1] in num_leaves.keys():
+                num_leaves[edge[1]] += 1
+            else:
+                num_leaves[edge[1]] = 1
 
-        edges = d[random_node]
-        connecting_node = edges[int(random()*len(edges))]
+        return len([x for x in num_leaves.values() if x == 1])
 
-        if not (random_node in visited_connected_nodes and connecting_node in visited_nodes):
-            nodes.remove(random_node)
-            visited_nodes.add(random_node)
-            visited_connected_nodes.add(connecting_node)
-            mlst.append((random_node, connecting_node))
-            i += 1
-    check_if_mlst()
+    def find_path(mlst, node, ending_node, visited=set([])):
+        if node in visited:
+            return None
 
-    # Method 4: Hillclimbing
+        visited.add(node)
 
+        for edge in mlst:
+            # Base Case
+            if edge[0] == node and edge[1] == ending_node:
+                return ((edge[0], edge[1]),)
+
+            path = find_path(mlst, edge[1], ending_node, visited)
+            if edge[0] == node and path:
+                return ((edge[0], edge[1]),) + path
+
+        return None
+
+    print num_leaves(mlst)
+    print find_path(mlst, '1', '90')
+    print '\n'
+    print find_path(mlst, '90', '1')
     break
+
+    '''
+    while True:
+        random_edge = int(random()*len(edges))
+        if random_edge not in mlst or (random_edge[1], random_edge[0]) not in mlst:
+            # Add the edge, forming a cycle, then remove one from the cycle
+            mlst.append(random_edge) # Need to maybe append the reverse?
+            num_leaves = num_leaves(mlst)
+            remove_edge = random_edge
+
+            for edge in find_cycle(mlst, edge):
+                mlst.remove(edge)
+                if num_leaves(mlst) > num_leaves
+                    num_leaves = num_leaves(mlst)
+                    remove_edge = edge
+
+            mlst.remove(random_edge)
+    '''
+
+
