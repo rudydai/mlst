@@ -112,7 +112,10 @@ def solveGraph():
 
                 mlst.remove(random_edge)
         '''
-    return mlst
+    returned = []
+    for edge in mlst:
+        returned.append(edge[0] + ' ' + edge[1])
+    return returned
 
 
 def solve():
