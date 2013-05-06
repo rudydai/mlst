@@ -3,6 +3,7 @@ package mlst
 import (
     "os"
     "fmt"
+    "math/rand"
 )
 
 //FILE INPUT AND OUTPUT
@@ -95,4 +96,21 @@ func Union(e1,e2 *Element) () {
     root1 := Find(e1)
     root2 := Find(e2)
     root1.Parent = root2
+}
+
+//GENERAL UTILITY
+func ContainsInt(array []int, toFind int) (bool) {
+    for i := 0; i < len(array); i++ {
+        if array[i] == toFind {
+            return true
+        }
+    }
+    return false
+}
+
+func ShuffleAdjList(adjList *AdjList) () {
+    for i := range *adjList {
+        j := rand.Intn(i + 1)
+        (*adjList)[i], (*adjList)[j] = (*adjList)[j], (*adjList)[i]
+    }
 }
