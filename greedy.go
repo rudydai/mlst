@@ -4,15 +4,6 @@ import (
     "fmt"
 )
 
-func ContainsInt(array []int, toFind int) (bool) {
-    for i := 0; i < len(array); i++ {
-        if array[i] == toFind {
-            return true
-        }
-    }
-    return false
-}
-
 func GreedySoln(e EdgeSet) (to_ret EdgeSet) {
 	var answer EdgeSet = make(map[Edge]bool)
     g := e.Graph()

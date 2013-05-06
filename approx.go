@@ -1,10 +1,10 @@
 package mlst
 
 import (
-    "os"
     "fmt"
 )
 
+<<<<<<< HEAD
 func GetEdgeSets() (e []EdgeSet) {
     var infile string
     if len(args) < 1 {
@@ -64,6 +64,8 @@ func PrintSets(e []EdgeSet) (err error){
     return nil
 }
 
+=======
+>>>>>>> 7af5b1f68c7e5a679c83573e79d5ab47324e2c13
 
 func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
     var ret EdgeSet = make(map[Edge]bool)
@@ -149,11 +151,6 @@ func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
     return ret
 }
 
-
-func (e Edge) PrintForm() (s string) {
-    return fmt.Sprintf("%d %d\n", e.Ends[0], e.Ends[1])
-}
-
 func Start() {
     edgesets := GetEdgeSets()
     if edgesets != nil {
@@ -167,32 +164,4 @@ func Start() {
         }
     }
 }
-
-type Element struct {
-    Parent *Element
-    value int
-}
-
-func Makeset(val int) (*Element) {
-    e := new(Element)
-    e.Parent = e
-    e.value = val
-    return e
-}
-
-func Find(e *Element) (*Element) {
-    if e.Parent == e {
-        return e
-    }
-    e.Parent = Find(e.Parent);
-    return e.Parent
-}
-
-func Union(e1,e2 *Element) () {
-    root1 := Find(e1)
-    root2 := Find(e2)
-    root1.Parent = root2
-}
-
-
 
