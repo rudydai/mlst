@@ -1,13 +1,40 @@
 package mlst
 
 import (
+	"math/rand"
     //"fmt"
 )
 
-func dfs(node int, mlst EdgeSet, visited []bool)
+func ContainsInt(array []int, toFind int) (bool) {
+    for i := 0; i < len(array); i++ {
+        if array[i] == toFind {
+            return true
+        }
+    }
+    return false
+}
 
-func RandomSoln(e EdgeSet) (solution Edgeset) {
-	g := e.Graph()
+func ShuffleAdjList(adjList *AdjList) () {
+	for i := range *adjList {
+	    j := rand.Intn(i + 1)
+	    (*adjList)[i], (*adjList)[j] = (*adjList)[j], (*adjList)[i]
+	}
+}
+
+func dfs(node int, mlst *EdgeSet, visited map[int]bool, adjList AdjList, g Graph) () {
+	if visited[node] == true {
+		return
+	}
+
+	visited[node] = true
+
+	ShuffleAdjList(&g.Neighbors[node])
+	
+}
+
+func RandomSoln(e EdgeSet) (solution EdgeSet) {
+	//g := e.Graph()
+	return nil
 }
 
 func RandomizeStart() {
