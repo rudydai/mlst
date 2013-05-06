@@ -1,45 +1,39 @@
 import sys
 
-def solve():
-	d = {} #graph representation: if i is index for node, d[i] is list of nodes attached to it: ie adjacency list
-	s1 = set([]) #nodes attached by the solution-in-progress
-	s2 = set([]) #list of unique nodes in graph
+def solveGraph(d, s1, s2):
 	edges = set([])
-	i = 0;
 
-	def solveGraph(d, s1, s2):
-		edges = set([])
+	while len(s1) < len(d):
+		max = 0
+		temp = None
+	
+		if len(s1) == 0:
+			for x in d:
+				if len(d[x]) > max:
+					max = len(d[x])
+					temp = x
+		else:
+			for x in s1:
+				if len(d[x]) > max:
+					max = len(d[x])
+					temp = x
 
-		while len(s1) < len(d):
-			max = 0
-			temp = None
-		
-			if len(s1) == 0:
-				for x in d:
-					if len(d[x]) > max:
-						max = len(d[x])
-						temp = x
-			else:
-				for x in s1:
-					if len(d[x]) > max:
-						max = len(d[x])
-						temp = x
+		s1.add(temp)
+		for y in d[temp]:
+			s1.add(y)
+			edges.add(str(temp) + " " +  str(y))
+			if temp in d[y]:
+				d[y].remove(temp)
+			for v in d:
+				if y in d[v]:
+					d[v].remove(y)
+				if temp in d[v]:
+					d[v].remove(temp)
 
-			s1.add(temp)
-			for y in d[temp]:
-				s1.add(y)
-				edges.add(str(temp) + " " +  str(y))
-				if temp in d[y]:
-					d[y].remove(temp)
-				for v in d:
-					if y in d[v]:
-						d[v].remove(y)
-					if temp in d[v]:
-						d[v].remove(temp)
+		d[temp] = []
+	return edges
 
-			d[temp] = []
-		return edges
-
+def solve():
 	f = open(sys.argv[1], 'r')
 	g  = open(sys.argv[2] , 'w')
 
@@ -47,9 +41,9 @@ def solve():
 	g.write(str(numGraphs) + '\n')
 
 	for _ in range(numGraphs):
-		d = {}
-		s1 = set([])
-		s2 = set([])
+		d = {} #graph representation: if i is index for node, d[i] is list of nodes attached to it: ie adjacency list
+		s1 = set([]) #nodes attached by the solution-in-progress
+		s2 = set([]) #list of unique nodes in graph
 
 		numEdges = int(f.readline())
 		for _ in range(numEdges):
