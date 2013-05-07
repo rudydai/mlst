@@ -1,8 +1,8 @@
 package mlst
 
-import (
+/**import (
     "fmt"
-)
+)*/
 
 func GreedySoln(e EdgeSet) (to_ret EdgeSet) {
 	var answer EdgeSet = make(map[Edge]bool)
@@ -11,9 +11,9 @@ func GreedySoln(e EdgeSet) (to_ret EdgeSet) {
     //degree := make([]int, MaxNumNodes)
 
     var visitedNodes []int
-    for edge := range e {
+    /**for edge := range e {
         fmt.Println("edge is %s", edge)
-    }
+    }*/
 
     for len(visitedNodes) < g.NumNodes {
         max := 0
@@ -35,7 +35,7 @@ func GreedySoln(e EdgeSet) (to_ret EdgeSet) {
             }
         }
 
-        fmt.Println("visitedNodes is %q", visitedNodes)
+        //fmt.Println("visitedNodes is %q", visitedNodes)
 
         /*visited := false
         for node := range visitedNodes {

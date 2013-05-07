@@ -4,7 +4,7 @@ import (
     "fmt"
 )
 
-func GetEdgeSets() (e []EdgeSet) {
+/**func GetEdgeSets() (e []EdgeSet) {
     var infile string
     if len(args) < 1 {
         infile = DefaultInputFile
@@ -61,7 +61,7 @@ func PrintSets(e []EdgeSet) (err error){
         }
     }
     return nil
-}
+}*/
 
 
 func ApproxSoln(e EdgeSet) (to_ret EdgeSet) {
