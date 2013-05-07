@@ -77,7 +77,7 @@ func ManyIters(e EdgeSet) (to_ret EdgeSet) {
     }
     best = ApproxSoln(e, inorder)
     orderg := best.Graph()
-    orderg.search()
+    orderg.Search()
     mostLeaves = orderg.NumLeaves
     for i := 0; i < BRUTE_ITERS; i++ {
         ordering := rand.Perm(MaxNumNodes)
