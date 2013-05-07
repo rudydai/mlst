@@ -21,7 +21,6 @@ func GetEdgeSets() (e []EdgeSet) {
         file.Close()
         return nil
     }
-    
     inReader := NewInFileReader(file)
     if edgeSets, err := inReader.ReadInputFile(); err != nil {
         fmt.Print("Invalid format of infile")

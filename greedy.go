@@ -1,8 +1,8 @@
 package mlst
 
-/**import (
+import (
     "fmt"
-)*/
+)
 
 func GreedySoln(e EdgeSet) (to_ret EdgeSet) {
 	var answer EdgeSet = make(map[Edge]bool)
@@ -72,11 +72,9 @@ func GreedyStart() {
         for i, edgeset := range(edgesets) {
             outsets[i] = GreedySoln(edgeset)
         }
-        /*
         err := PrintSets(outsets)
         if err != nil {
             fmt.Print("Problem writing output to file")
         }
-        */
     }
 }
