@@ -71,6 +71,14 @@ func ManyIters(e EdgeSet) (to_ret EdgeSet) {
     var curr EdgeSet
     var numLeaves int
     var mostLeaves int = 0
+    inorder := make([]int, MaxNumNodes)
+    for ind := range(inorder) {
+        inorder[ind] = ind
+    }
+    best = ApproxSoln(e, inorder)
+    orderg := best.Graph()
+    orderg.search()
+    mostLeaves = orderg.NumLeaves
     for i := 0; i < BRUTE_ITERS; i++ {
         ordering := rand.Perm(MaxNumNodes)
         curr = ApproxSoln(e, ordering)
