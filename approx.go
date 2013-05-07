@@ -66,7 +66,7 @@ func PrintSets(e []EdgeSet) (err error) {
 }
 
 func ManyIters(e EdgeSet) (to_ret EdgeSet) {
-    var BRUTE_ITERS int = 1000
+    var BRUTE_ITERS int = 10000
     var best EdgeSet = nil
     var curr EdgeSet
     var numLeaves int
