@@ -87,12 +87,13 @@ def solveGraph():
         mlst = []
         import random as rand
         dfs(rand.sample(set(d.keys()), 1)[0], mlst, visited)
-        print mlst
+        """print mlst
 
         print num_leaves(mlst)
         print find_path(mlst, '1', '90')
         print '\n'
         print find_path(mlst, '90', '1')
+        """
         break
 
         '''

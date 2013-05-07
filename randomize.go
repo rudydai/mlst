@@ -96,8 +96,8 @@ func RandomSoln(e EdgeSet) (solution EdgeSet) {
 				break
 			}
 			if _, ok := mlst[randomEdge]; !ok {
-		    	mlst[randomEdge] = true
-		    	i++
+                mlst[randomEdge] = true
+                i++
 		    }
 		}
 		//checkIfMlst(mlst)
@@ -119,7 +119,6 @@ func RandomSoln(e EdgeSet) (solution EdgeSet) {
 		fmt.Println(NumLeaves(mlst))
 		fmt.Println(FindPath(mlst, startNode, endNode, visited))
 		fmt.Println(FindPath(mlst, endNode, startNode, visited))
-    
 	}
 	solution = mlst
 
@@ -132,11 +131,11 @@ func RandomizeStart() {
         outsets := make([]EdgeSet, len(edgesets))
         for i, edgeset := range(edgesets) {
             outsets[i] = ApproxSoln(edgeset)
-        	//fmt.Println(outsets)
+            //fmt.Println(outsets)
         }
-        /*err := PrintSets(outsets)
+        err := PrintSets(outsets)
         if err != nil {
             fmt.Print("Problem writing output to file")
-        }*/
+        }
     }
 }
